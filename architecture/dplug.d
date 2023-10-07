@@ -40,41 +40,84 @@ import core.stdc.stdlib : strtol;
 
 alias FAUSTFLOAT = float;
 
-class Meta {
+class Meta
+{
 nothrow:
 @nogc:
-    void declare(string name, string value) {}
+    void declare(string name, string value)
+    {
+    }
 }
 
-class UI {
+class UI
+{
 nothrow:
 @nogc:
-    void declare(string id, string key, string value) {}
-    void declare(int id, string key, string value) {}
-    void declare(FAUSTFLOAT* id, string key, string value) {}
+    void declare(string id, string key, string value)
+    {
+    }
+
+    void declare(int id, string key, string value)
+    {
+    }
+
+    void declare(FAUSTFLOAT* id, string key, string value)
+    {
+    }
 
     // -- layout groups
 
-    void openTabBox(string label) {}
-    void openHorizontalBox(string label) {}
-    void openVerticalBox(string label) {}
-    void closeBox() {}
+    void openTabBox(string label)
+    {
+    }
+
+    void openHorizontalBox(string label)
+    {
+    }
+
+    void openVerticalBox(string label)
+    {
+    }
+
+    void closeBox()
+    {
+    }
 
     // -- active widgets
 
-    void addButton(string label, FAUSTFLOAT* val) {}
-    void addCheckButton(string label, FAUSTFLOAT* val) {}
-    void addVerticalSlider(string label, FAUSTFLOAT* val, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step) {}
-    void addHorizontalSlider(string label, FAUSTFLOAT* val, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step) {}
-    void addNumEntry(string label, FAUSTFLOAT* val, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step) {}
+    void addButton(string label, FAUSTFLOAT* val)
+    {
+    }
+
+    void addCheckButton(string label, FAUSTFLOAT* val)
+    {
+    }
+
+    void addVerticalSlider(string label, FAUSTFLOAT* val, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step)
+    {
+    }
+
+    void addHorizontalSlider(string label, FAUSTFLOAT* val, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step)
+    {
+    }
+
+    void addNumEntry(string label, FAUSTFLOAT* val, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step)
+    {
+    }
 
     // -- passive display widgets
 
-    void addHorizontalBargraph(string label, FAUSTFLOAT* val, FAUSTFLOAT min, FAUSTFLOAT max) {}
-    void addVerticalBargraph(string label, FAUSTFLOAT* val, FAUSTFLOAT min, FAUSTFLOAT max) {}
+    void addHorizontalBargraph(string label, FAUSTFLOAT* val, FAUSTFLOAT min, FAUSTFLOAT max)
+    {
+    }
+
+    void addVerticalBargraph(string label, FAUSTFLOAT* val, FAUSTFLOAT min, FAUSTFLOAT max)
+    {
+    }
 }
 
-interface dsp {
+interface dsp
+{
 nothrow:
 @nogc:
 public:
@@ -94,7 +137,8 @@ public:
  * a plug-in or GUI.  These parameters are stored in a vector which can be accesed via
  * `readParams()`
  */
-class FaustParamAccess : UI {
+class FaustParamAccess : UI
+{
 nothrow:
 @nogc:
     this()
@@ -106,7 +150,7 @@ nothrow:
     {
         if (value == "")
         {
-            nextParamId = cast(int)strtol(key.ptr, null, 0);
+            nextParamId = cast(int) strtol(key.ptr, null, 0);
         }
         else if (key == "unit")
         {
@@ -119,13 +163,13 @@ nothrow:
         _faustParams.pushBack(FaustParam(label, nextParamUnit, val, 0, 0, 0, 0, true, nextParamId));
         resetNextParamMeta();
     }
-    
+
     override void addCheckButton(string label, FAUSTFLOAT* val)
     {
         _faustParams.pushBack(FaustParam(label, nextParamUnit, val, 0, 0, 0, 0, true, nextParamId));
         resetNextParamMeta();
     }
-    
+
     override void addVerticalSlider(string label, FAUSTFLOAT* val, FAUSTFLOAT init, FAUSTFLOAT min, FAUSTFLOAT max, FAUSTFLOAT step)
     {
         _faustParams.pushBack(FaustParam(label, nextParamUnit, val, init, min, max, step, false, nextParamId));
@@ -179,7 +223,7 @@ private:
         do
         {
             success = true;
-            for(int i = 0; i < params.length - 1; ++i)
+            for (int i = 0; i < params.length - 1; ++i)
             {
                 auto left = params[i];
                 auto right = params[i + 1];
@@ -191,7 +235,7 @@ private:
                 }
             }
         }
-        while(!success);
+        while (!success);
         return params;
     }
 }
@@ -209,10 +253,14 @@ struct FaustParam
     int ParamId;
 }
 
-version(unittest){}
-version(faustoverride){}
+version (unittest)
+{
+}
+version (faustoverride)
+{
+}
 else
-mixin(pluginEntryPoints!FaustClient);
+    mixin(pluginEntryPoints!FaustClient);
 
 class FaustClient : dplug.client.Client
 {
@@ -252,18 +300,22 @@ nothrow:
         // Add faust parameters
         buildFaustModule();
         int faustParamIndexStart = 0;
-        foreach(param; _faustParams)
+        foreach (param; _faustParams)
         {
             if (param.isButton)
             {
-                params ~= mallocNew!BoolParameter(faustParamIndexStart++, param.label, cast(bool)(*param.val));
+                params ~= mallocNew!BoolParameter(faustParamIndexStart++, param.label, cast(bool)(
+                        *param.val));
             }
-            else if (param.step == 1.0f) {
-                params ~= mallocNew!IntegerParameter(faustParamIndexStart++, param.label, param.unit, cast(int)param.min, cast(int)param.max, cast(int)param.initial);
+            else if (param.step == 1.0f)
+            {
+                params ~= mallocNew!IntegerParameter(faustParamIndexStart++, param.label, param.unit, cast(
+                        int) param.min, cast(int) param.max, cast(int) param.initial);
             }
             else
             {
-                params ~= mallocNew!LinearFloatParameter(faustParamIndexStart++, param.label, param.unit, param.min, param.max, param.initial);
+                params ~= mallocNew!LinearFloatParameter(faustParamIndexStart++, param.label, param.unit, param.min, param
+                        .max, param.initial);
             }
         }
 
@@ -294,7 +346,7 @@ nothrow:
     // exceed some amount of frames at once.
     // This can be useful as a cheap chunking for parameter smoothing.
     // Buffer splitting also allows to allocate statically or on the stack with less worries.
-    override int maxFramesInProcess() const //nothrow @nogc
+    override int maxFramesInProcess() const  //nothrow @nogc
     {
         return 512;
     }
@@ -302,29 +354,32 @@ nothrow:
     override void reset(double sampleRate, int maxFrames, int numInputs, int numOutputs) nothrow @nogc
     {
         // Clear here any state and delay buffers you might have.
-        _dsp.initialize(cast(int)sampleRate);
+        _dsp.initialize(cast(int) sampleRate);
         assert(maxFrames <= 512); // guaranteed by audio buffer splitting
     }
 
     void updateFaustParams()
     {
-        foreach(param; params())
+        foreach (param; params())
         {
-            foreach(faustParam; _faustParams)
+            foreach (faustParam; _faustParams)
             {
-                if (param.label() == faustParam.label)
+                int paramIndex = param.index();
+                if (paramIndex == faustParam.ParamId)
                 {
-                    if (cast(FloatParameter)param)
+                    if (cast(FloatParameter) param)
                     {
-                        *(faustParam.val) = (cast(FloatParameter)param).valueAtomic();
+                        *(faustParam.val) = (cast(FloatParameter) param).valueAtomic();
                     }
-                    else if (cast(IntegerParameter)param)
+                    else if (cast(IntegerParameter) param)
                     {
-                        *(faustParam.val) = cast(FAUSTFLOAT)((cast(IntegerParameter)param).valueAtomic());
+                        *(faustParam.val) = cast(FAUSTFLOAT)((cast(IntegerParameter) param)
+                                .valueAtomic());
                     }
-                    else if (cast(BoolParameter)param)
+                    else if (cast(BoolParameter) param)
                     {
-                        *(faustParam.val) = cast(FAUSTFLOAT)((cast(BoolParameter)param).valueAtomic());
+                        *(faustParam.val) = cast(FAUSTFLOAT)((cast(BoolParameter) param)
+                                .valueAtomic());
                     }
                     else
                     {
@@ -335,23 +390,22 @@ nothrow:
         }
     }
 
-    override void processAudio(const(float*)[] inputs, float*[]outputs, int frames,
-                               TimeInfo info) nothrow @nogc
+    override void processAudio(const(float*)[] inputs, float*[] outputs, int frames,
+        TimeInfo info) nothrow @nogc
     {
         assert(frames <= 512); // guaranteed by audio buffer splitting
 
-        int numInputs = cast(int)inputs.length;
-        int numOutputs = cast(int)outputs.length;
+        int numInputs = cast(int) inputs.length;
+        int numOutputs = cast(int) outputs.length;
 
         int minChan = numInputs > numOutputs ? numOutputs : numInputs;
 
-        // do reverb
         updateFaustParams();
-        _dsp.compute(frames, cast(float*[])inputs, cast(float*[])outputs);
+        _dsp.compute(frames, cast(float*[]) inputs, cast(float*[]) outputs);
 
         // fill with zero the remaining channels
         for (int chan = minChan; chan < numOutputs; ++chan)
-            outputs[chan][0..frames] = 0; // D has array slices assignments and operations
+            outputs[chan][0 .. frames] = 0; // D has array slices assignments and operations
     }
 
 private:
@@ -368,17 +422,16 @@ private:
  *******************************************************************************
  *******************************************************************************/
 
-<<includeIntrinsic>>
+<< includeIntrinsic >>
 
-/********************END ARCHITECTURE SECTION (part 1/2)****************/
+     /********************END ARCHITECTURE SECTION (part 1/2)****************/
 
-/**************************BEGIN USER SECTION **************************/
+    /**************************BEGIN USER SECTION **************************/
 
-<<includeclass>>
+    << includeclass >>
 
-/***************************END USER SECTION ***************************/
+     /***************************END USER SECTION ***************************/
 
-/*******************BEGIN ARCHITECTURE SECTION (part 2/2)***************/
+    /*******************BEGIN ARCHITECTURE SECTION (part 2/2)***************/
 
-/********************END ARCHITECTURE SECTION (part 2/2)****************/
-
+    /********************END ARCHITECTURE SECTION (part 2/2)****************/
