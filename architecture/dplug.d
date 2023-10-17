@@ -362,9 +362,9 @@ nothrow:
     {
         foreach (param; params())
         {
+            int paramIndex = param.index();
             foreach (faustParam; _faustParams)
             {
-                int paramIndex = param.index();
                 if (paramIndex == faustParam.ParamId)
                 {
                     if (cast(FloatParameter) param)
@@ -401,14 +401,14 @@ nothrow:
         int minChan = numInputs > numOutputs ? numOutputs : numInputs;
 
         updateFaustParams();
-        _dsp.compute(frames, cast(float*[]) inputs, cast(float*[]) outputs);
+        _dsp.compute(frames, cast(FAUSTFLOAT*[]) inputs, cast(FAUSTFLOAT*[]) outputs);
 
         // fill with zero the remaining channels
         for (int chan = minChan; chan < numOutputs; ++chan)
             outputs[chan][0 .. frames] = 0; // D has array slices assignments and operations
     }
 
-private:
+protected:
     FAUSTCLASS _dsp;
     UI _faustUI;
     FaustParam[] _faustParams;
@@ -424,14 +424,14 @@ private:
 
 << includeIntrinsic >>
 
-     /********************END ARCHITECTURE SECTION (part 1/2)****************/
+/********************END ARCHITECTURE SECTION (part 1/2)****************/
 
-    /**************************BEGIN USER SECTION **************************/
+/**************************BEGIN USER SECTION **************************/
 
-    << includeclass >>
+<< includeclass >>
 
-     /***************************END USER SECTION ***************************/
+/***************************END USER SECTION ***************************/
 
-    /*******************BEGIN ARCHITECTURE SECTION (part 2/2)***************/
+/*******************BEGIN ARCHITECTURE SECTION (part 2/2)***************/
 
-    /********************END ARCHITECTURE SECTION (part 2/2)****************/
+/********************END ARCHITECTURE SECTION (part 2/2)****************/
